@@ -24,39 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
             let finalUrl = links[requestedLinkName];
 
             // Adiciona o comportamento padrão (fallback)
-            if (!requestedLinkName) {
-                showError("Erro: Nenhum link especificado. Use um link completo com o parâmetro 'link'.");
-                return; // Para a execução do script
+            if (!requestedLinkName || !finalUrl) {
+                showError("Erro: Nenhum link especificado ou encontrado. Por favor, use um link válido do canal.");
+                return;
             }
 
-            if (finalUrl) {
-                let timeLeft = 15; // 15 segundos
+            let timeLeft = 15; // 15 segundos
+            countdownElement.textContent = timeLeft;
+            timerText.textContent = `Por favor, aguarde ${timeLeft} segundos`;
+            
+            const countdown = setInterval(() => {
+                timeLeft--;
                 countdownElement.textContent = timeLeft;
                 timerText.textContent = `Por favor, aguarde ${timeLeft} segundos`;
                 
-                const countdown = setInterval(() => {
-                    timeLeft--;
-                    countdownElement.textContent = timeLeft;
-                    timerText.textContent = `Por favor, aguarde ${timeLeft} segundos`;
+                // Atualiza a barra de progresso
+                progressElement.style.width = ((15 - timeLeft) / 15 * 100) + '%';
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    titleElement.textContent = 'Seu download está pronto!';
+                    downloadLink.href = finalUrl;
+                    downloadLink.classList.add('show');
                     
-                    // Atualiza a barra de progresso
-                    progressElement.style.width = ((15 - timeLeft) / 15 * 100) + '%';
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        titleElement.textContent = 'Seu download está pronto!';
-                        downloadLink.href = finalUrl;
-                        downloadLink.classList.add('show');
-                        
-                        // Esconde elementos de carregamento
-                        loadingDots.style.display = 'none';
-                        infoBox.style.display = 'none';
-                    }
-                }, 1000);
-            } else {
-                // Caso o link não seja encontrado no JSON
-                showError("Erro: Link não encontrado. Verifique se o nome na URL está correto.");
-            }
+                    // Esconde elementos de carregamento
+                    loadingDots.style.display = 'none';
+                    infoBox.style.display = 'none';
+                }
+            }, 1000);
         })
         .catch(error => {
             console.error('Erro geral:', error);

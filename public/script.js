@@ -1,38 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
     const timerText = document.getElementById('timer-text');
+    const countdownElement = document.getElementById('countdown');
+    const progressElement = document.getElementById('progress');
     const downloadLink = document.getElementById('download-link');
+    const titleElement = document.getElementById('title');
+    const errorMessage = document.getElementById('error-message');
 
-    // Simular que pegamos o link de algum lugar (por exemplo, da URL)
-    // Para simplificar, vamos usar um link de exemplo que está no links.json
+    
     const requestedLinkName = 'video_viral'; 
 
     fetch('links.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar os links.');
+            }
+            return response.json();
+        })
         .then(links => {
             const finalUrl = links[requestedLinkName];
             if (finalUrl) {
                 let timeLeft = 15; // 15 segundos
-                timerText.textContent = `Aguarde ${timeLeft} segundos...`;
+                countdownElement.textContent = timeLeft;
+                timerText.textContent = `Por favor, aguarde ${timeLeft} segundos`;
 
                 const countdown = setInterval(() => {
                     timeLeft--;
-                    timerText.textContent = `Aguarde ${timeLeft} segundos...`;
+                    countdownElement.textContent = timeLeft;
+                    timerText.textContent = `Por favor, aguarde ${timeLeft} segundos`;
+                    
+                    // Atualiza a barra de progresso
+                    progressElement.style.width = ((15 - timeLeft) / 15 * 100) + '%';
 
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
-                        timerText.style.display = 'none';
-                        document.getElementById('title').textContent = 'Seu download está pronto!';
+                        titleElement.textContent = 'Seu download está pronto!';
                         downloadLink.href = finalUrl;
-                        downloadLink.style.display = 'inline-block';
+                        downloadLink.classList.add('show');
+                        
+                        // Esconder elementos desnecessários
+                        document.querySelector('.loading-dots').style.display = 'none';
+                        document.querySelector('.info-box').style.display = 'none';
                     }
                 }, 1000);
             } else {
                 // Caso o link não seja encontrado no JSON
-                timerText.textContent = "Erro: Link não encontrado.";
+                showError("Erro: Link não encontrado.");
             }
         })
         .catch(error => {
             console.error('Erro ao carregar o arquivo links.json:', error);
-            timerText.textContent = "Erro ao carregar os links.";
+            showError("Erro ao carregar os links.");
         });
+        
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        titleElement.textContent = 'Ocorreu um erro';
+        document.querySelector('.loading-dots').style.display = 'none';
+        document.querySelector('.info-box').style.display = 'none';
+    }
 });

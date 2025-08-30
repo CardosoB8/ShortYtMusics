@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadLink = document.getElementById('download-link');
     const titleElement = document.getElementById('title');
     const errorMessage = document.getElementById('error-message');
-    
-    // 1. Pega o nome do link diretamente da URL
+    const loadingDots = document.querySelector('.loading-dots');
+    const infoBox = document.querySelector('.info-box');
+
+    // 1. Pega o nome do link da URL
     const urlParams = new URLSearchParams(window.location.search);
     const requestedLinkName = urlParams.get('link');
 
@@ -14,15 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('links.json')
         .then(response => {
             if (!response.ok) {
-                // Se a resposta não for OK (ex: arquivo não encontrado), lança um erro
-                throw new Error('Erro ao carregar o arquivo links.json. Verifique se ele está na pasta "public".');
+                throw new Error('Erro ao carregar o arquivo links.json.');
             }
             return response.json();
         })
         .then(links => {
-            // 3. Verifica se o link solicitado existe no JSON
-            const finalUrl = links[requestedLinkName];
-            
+            let finalUrl = links[requestedLinkName];
+
+            // Adiciona o comportamento padrão (fallback)
+            if (!requestedLinkName) {
+                showError("Erro: Nenhum link especificado. Use um link completo com o parâmetro 'link'.");
+                return; // Para a execução do script
+            }
+
             if (finalUrl) {
                 let timeLeft = 15; // 15 segundos
                 countdownElement.textContent = timeLeft;
@@ -43,12 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         downloadLink.classList.add('show');
                         
                         // Esconde elementos de carregamento
-                        document.querySelector('.loading-dots').style.display = 'none';
-                        document.querySelector('.info-box').style.display = 'none';
+                        loadingDots.style.display = 'none';
+                        infoBox.style.display = 'none';
                     }
                 }, 1000);
             } else {
-                // Caso o link não seja encontrado no JSON ou o nome seja nulo
+                // Caso o link não seja encontrado no JSON
                 showError("Erro: Link não encontrado. Verifique se o nome na URL está correto.");
             }
         })
@@ -61,9 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.textContent = message;
         errorMessage.style.display = 'block';
         titleElement.textContent = 'Ocorreu um erro';
-        document.querySelector('.loading-dots').style.display = 'none';
-        document.querySelector('.info-box').style.display = 'none';
-        if (countdownElement) {
+        
+        // Esconde elementos de carregamento
+        if (loadingDots) loadingDots.style.display = 'none';
+        if (infoBox) infoBox.style.display = 'none';
+        if (countdownElement && countdownElement.parentElement) {
             countdownElement.parentElement.style.display = 'none';
         }
     }

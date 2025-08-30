@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestedLinkName = urlParams.get('link');
 
     // 2. Tenta carregar o links.json
-    fetch('links.json')
+    fetch('data/links.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erro ao carregar o arquivo links.json.');

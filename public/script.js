@@ -1,14 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const timerText = document.getElementById('timer-text');
+    const titleElement = document.getElementById('title');
+    const timerText = document.querySelector('.timer-text');
+    const countdownElement = document.getElementById('countdown');
+    const progressElement = document.getElementById('progress');
     const downloadLink = document.getElementById('download-link');
+    const errorMessage = document.getElementById('error-message');
+    const loadingDots = document.querySelector('.loading-dots');
+    const infoBox = document.querySelector('.info-box');
 
-    // O link é fixado para "video_viral".
+    // Link fixo. Você precisa alterar esta linha para cada link que quiser compartilhar.
     const requestedLinkName = 'video_viral';
 
     fetch('links.json')
         .then(response => {
             if (!response.ok) {
-                // Adiciona um tratamento de erro mais claro para o problema de carregamento do arquivo
                 throw new Error('Erro ao carregar o arquivo links.json. Verifique a sua localização.');
             }
             return response.json();
@@ -17,27 +22,46 @@ document.addEventListener('DOMContentLoaded', () => {
             const finalUrl = links[requestedLinkName];
             if (finalUrl) {
                 let timeLeft = 15;
-                timerText.textContent = `Aguarde ${timeLeft} segundos...`;
+                countdownElement.textContent = timeLeft;
+                timerText.textContent = `Por favor, aguarde `;
 
                 const countdown = setInterval(() => {
                     timeLeft--;
-                    timerText.textContent = `Aguarde ${timeLeft} segundos...`;
+                    countdownElement.textContent = timeLeft;
 
+                    // Atualiza a barra de progresso
+                    progressElement.style.width = ((15 - timeLeft) / 15 * 100) + '%';
+                    
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
-                        timerText.style.display = 'none';
-                        document.getElementById('title').textContent = 'Seu download está pronto!';
+                        titleElement.textContent = 'Seu download está pronto!';
                         downloadLink.href = finalUrl;
-                        downloadLink.style.display = 'inline-block';
+                        downloadLink.classList.add('show');
+                        
+                        // Esconde os elementos de carregamento
+                        loadingDots.style.display = 'none';
+                        infoBox.style.display = 'none';
+                        timerText.style.display = 'none';
                     }
                 }, 1000);
             } else {
-                // Caso o link não seja encontrado no JSON
-                timerText.textContent = "Erro: Link não encontrado.";
+                showError("Erro: Link não encontrado. Verifique se o nome no JSON está correto.");
             }
         })
         .catch(error => {
-            console.error('Erro ao carregar o arquivo links.json:', error);
-            timerText.textContent = "Erro ao carregar os links.";
+            console.error('Erro geral:', error);
+            showError("Erro ao carregar os links.");
         });
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        titleElement.textContent = 'Ocorreu um erro';
+        
+        // Esconde todos os elementos de carregamento e contagem
+        if (loadingDots) loadingDots.style.display = 'none';
+        if (infoBox) infoBox.style.display = 'none';
+        const loadingContainer = document.querySelector('.loading-container');
+        if (loadingContainer) loadingContainer.style.display = 'none';
+    }
 });

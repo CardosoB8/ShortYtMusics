@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ferramentas Premium para WhatsApp</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,12 +111,10 @@
     <h1 class="text-4xl font-bold text-gray-900 text-center mb-4">Ferramentas Premium para WhatsApp</h1>
     <p class="text-gray-600 text-center">Crie, personalize e compartilhe com um toque premium.</p>
 
-    <!-- Ad placeholder at the top -->
     <div class="ad-container mt-4">
         Espaço para Anúncio - Substitua este código pelo seu script de monetização!
     </div>
 
-    <!-- Seção de Criação de Status -->
     <div class="p-4 bg-gray-50 rounded-lg">
         <h2 class="section-header">1. Criador de Status</h2>
         <div class="flex flex-col md:flex-row gap-4 mb-4">
@@ -171,7 +168,6 @@
                 <div>
                     <h3 class="font-semibold text-gray-700 mb-2">Fundo</h3>
                     <div class="flex flex-wrap gap-2 justify-center relative">
-                        <!-- Botão para abrir o diálogo de cores -->
                         <button id="colorBtn" class="w-10 h-10 rounded-full border border-gray-400 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center text-xl" style="background-color: #3b82f6;">
                             🎨
                         </button>
@@ -179,7 +175,6 @@
                         <label for="imageInput" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-dashed border-gray-400 text-gray-600 cursor-pointer transform hover:scale-110 transition-transform duration-200">
                             +
                         </label>
-                        <!-- Diálogo de Cores Personalizado -->
                         <div id="colorDialog" class="color-dialog">
                             <div class="grid grid-cols-5 gap-2">
                                 <div class="color-swatch" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
@@ -204,10 +199,8 @@
         </div>
     </div>
 
-    <!-- Seção de Ferramentas Úteis -->
     <div class="p-4 bg-gray-50 rounded-lg">
         <h2 class="section-header">2. Ferramentas Úteis</h2>
-        <!-- Gerador de Imagem com IA -->
         <div class="mb-6">
             <h3 class="font-semibold text-gray-700 mb-2">Gerador de Imagem com IA ✨</h3>
             <p class="text-sm text-gray-500 mb-2">Descreva a imagem que você quer e a IA criará uma arte exclusiva para o fundo do seu status.</p>
@@ -220,7 +213,6 @@
             </div>
         </div>
 
-        <!-- Gerador de Mensagem com IA -->
         <div class="mb-6">
             <h3 class="font-semibold text-gray-700 mb-2">Gerador de Mensagem com IA ✨</h3>
             <p class="text-sm text-gray-500 mb-2">Diga o que você precisa e a IA criará uma mensagem única.</p>
@@ -230,7 +222,6 @@
             </div>
         </div>
 
-        <!-- Gerador de Link Direto -->
         <div class="mb-6">
             <h3 class="font-semibold text-gray-700 mb-2">Gerador de Link Direto</h3>
             <p class="text-sm text-gray-500 mb-2">Crie links para iniciar conversas sem adicionar o contato.</p>
@@ -245,7 +236,6 @@
             </div>
         </div>
         
-        <!-- Ferramenta de Copiar Texto -->
         <div class="mb-6">
             <h3 class="font-semibold text-gray-700 mb-2">Copiar Mensagem</h3>
             <p class="text-sm text-gray-500 mb-2">Copie o texto do criador de status com um clique.</p>
@@ -514,35 +504,25 @@
         generateAIBtn.disabled = true;
 
         try {
-            const systemPrompt = `Você é um criador de conteúdo especializado em mensagens curtas e de impacto para redes sociais, como status do WhatsApp. Seu objetivo é gerar mensagens criativas, inspiradoras ou engraçadas baseadas no prompt do usuário. Responda apenas com a mensagem, sem frases introdutórias ou explicações.`;
-            const userQuery = `Gere um status de WhatsApp com base no seguinte: "${prompt}". A mensagem deve ser concisa e ter no máximo 150 caracteres.`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-            };
-            const apiKey = "AIzaSyCBCOHXNDfZx-3PKrrBFqtLUL1P3iTr6N4";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
+            const response = await fetch('/api/generate-text', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ prompt: prompt })
             });
 
             const result = await response.json();
-            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            const text = result.text;
 
             if (text) {
                 textInput.value = text;
                 drawStatus();
             } else {
-                textInput.value = "Não foi possível gerar a mensagem. Tente novamente.";
+                textInput.value = result.error || "Não foi possível gerar a mensagem. Tente novamente.";
                 drawStatus();
             }
         } catch (error) {
             console.error('Erro ao gerar mensagem com IA:', error);
-            textInput.value = "Erro na comunicação com a IA. Tente novamente mais tarde.";
+            textInput.value = "Erro na comunicação com o servidor. Tente novamente mais tarde.";
             drawStatus();
         } finally {
             generateAIBtn.textContent = originalBtnText;
@@ -566,21 +546,14 @@
         aiImageLoading.classList.remove('hidden');
 
         try {
-            const payload = { 
-                instances: { prompt: prompt }, 
-                parameters: { "sampleCount": 1 } 
-            };
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
+            const response = await fetch('/api/generate-image', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ prompt: prompt })
             });
 
             const result = await response.json();
-            const base64Data = result?.predictions?.[0]?.bytesBase64Encoded;
+            const base64Data = result?.base64;
 
             if (base64Data) {
                 const img = new Image();

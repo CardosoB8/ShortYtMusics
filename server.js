@@ -8,22 +8,19 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware para servir arquivos estáticos e JSON
+// Middleware para servir arquivos estáticos da pasta 'public'
+// Crie uma pasta 'public' e coloque lá o index.html, favicon.ico, etc.
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(express.json());
-
-// Rota para a página inicial
-// Isso vai servir o arquivo index.html quando a URL base for acessada
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 // Endpoint para gerar texto com IA
 app.post('/api/generate-text', async (req, res) => {
     try {
         const apiKey = process.env.API_KEY;
         if (!apiKey) {
-            return res.status(500).json({ error: 'API key not configured.' });
+            console.error('API_KEY not configured.');
+            return res.status(500).json({ error: 'Erro no servidor: Chave de API não configurada.' });
         }
 
         const { prompt } = req.body;
@@ -42,17 +39,24 @@ app.post('/api/generate-text', async (req, res) => {
             body: JSON.stringify(payload)
         });
 
+        // Verifique se a resposta da API externa é ok
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro na API externa:', response.status, errorText);
+            return res.status(response.status).json({ error: 'Erro ao gerar texto com a IA.' });
+        }
+
         const result = await response.json();
         const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (text) {
             res.json({ text: text });
         } else {
-            res.status(500).json({ error: 'Não foi possível gerar a mensagem.' });
+            res.status(500).json({ error: 'Não foi possível gerar a mensagem. Resposta da IA incompleta.' });
         }
 
     } catch (error) {
-        console.error('Erro na chamada da API:', error);
+        console.error('Erro no servidor durante a chamada da API de texto:', error);
         res.status(500).json({ error: 'Erro interno do servidor.' });
     }
 });
@@ -60,14 +64,15 @@ app.post('/api/generate-text', async (req, res) => {
 // Endpoint para gerar imagem com IA
 app.post('/api/generate-image', async (req, res) => {
     try {
-        const apiKey = process.env.API_KEY; // Usando a mesma chave, se aplicável
+        const apiKey = process.env.API_KEY;
         if (!apiKey) {
-            return res.status(500).json({ error: 'API key not configured.' });
+            console.error('API_KEY not configured.');
+            return res.status(500).json({ error: 'Erro no servidor: Chave de API não configurada.' });
         }
 
         const { prompt } = req.body;
         const payload = {
-            instances: { prompt: prompt },
+            instances: [{ prompt: prompt }], // Estrutura corrigida para o modelo
             parameters: { "sampleCount": 1 }
         };
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
@@ -78,19 +83,30 @@ app.post('/api/generate-image', async (req, res) => {
             body: JSON.stringify(payload)
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro na API de imagem externa:', response.status, errorText);
+            return res.status(response.status).json({ error: 'Erro ao gerar imagem com a IA.' });
+        }
+
         const result = await response.json();
         const base64Data = result?.predictions?.[0]?.bytesBase64Encoded;
 
         if (base64Data) {
             res.json({ base64: base64Data });
         } else {
-            res.status(500).json({ error: 'Não foi possível gerar a imagem.' });
+            res.status(500).json({ error: 'Não foi possível gerar a imagem. Resposta da IA incompleta.' });
         }
 
     } catch (error) {
-        console.error('Erro na chamada da API de imagem:', error);
+        console.error('Erro no servidor durante a chamada da API de imagem:', error);
         res.status(500).json({ error: 'Erro interno do servidor.' });
     }
+});
+
+// A rota da página principal agora é um fallback
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {

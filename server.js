@@ -31,10 +31,7 @@ app.post('/api/generate-text', async (req, res) => {
             systemInstruction: { parts: [{ text: systemPrompt }] },
         };
 
-        // --- MUDANÇA AQUI ---
-        // A URL agora usa o modelo gemini-2.0-flash
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-        // --- FIM DA MUDANÇA ---
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -65,8 +62,50 @@ app.post('/api/generate-text', async (req, res) => {
 
 // Endpoint para gerar imagem com IA
 app.post('/api/generate-image', async (req, res) => {
-    // Código de geração de imagem permanece o mesmo
-    // ...
+    try {
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            console.error('API_KEY not configured for image generation.');
+            return res.status(500).json({ error: 'Erro no servidor: Chave de API não configurada.' });
+        }
+
+        const { prompt } = req.body;
+        
+        // --- MUDANÇA PRINCIPAL AQUI ---
+        // 'instances' deve ser um array de objetos, não um único objeto.
+        const payload = {
+            instances: [{ prompt: prompt }], 
+            parameters: { "sampleCount": 1 }
+        };
+        // --- FIM DA MUDANÇA ---
+        
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro na API de imagem externa:', response.status, errorText);
+            return res.status(response.status).json({ error: 'Erro ao gerar imagem com a IA. Verifique se a sua chave de API tem permissão para este modelo.' });
+        }
+
+        const result = await response.json();
+        const base64Data = result?.predictions?.[0]?.bytesBase64Encoded;
+
+        if (base64Data) {
+            res.json({ base64: base64Data });
+        } else {
+            res.status(500).json({ error: 'Não foi possível gerar a imagem. Resposta da IA incompleta.' });
+        }
+
+    } catch (error) {
+        console.error('Erro no servidor durante a chamada da API de imagem:', error);
+        res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
 });
 
 app.listen(port, () => {

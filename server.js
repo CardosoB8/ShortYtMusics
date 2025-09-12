@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(express.json());
 
-// Endpoint para gerar texto com IA
+// Endpoint para gerar texto com IA (sem alterações)
 app.post('/api/generate-text', async (req, res) => {
     try {
         const apiKey = process.env.API_KEY;
@@ -60,7 +60,7 @@ app.post('/api/generate-text', async (req, res) => {
     }
 });
 
-// Endpoint para gerar imagem com IA
+// Endpoint para gerar imagem com IA (revisado)
 app.post('/api/generate-image', async (req, res) => {
     try {
         const apiKey = process.env.API_KEY;
@@ -71,13 +71,10 @@ app.post('/api/generate-image', async (req, res) => {
 
         const { prompt } = req.body;
         
-        // --- MUDANÇA PRINCIPAL AQUI ---
-        // 'instances' deve ser um array de objetos, não um único objeto.
         const payload = {
             instances: [{ prompt: prompt }], 
             parameters: { "sampleCount": 1 }
         };
-        // --- FIM DA MUDANÇA ---
         
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
@@ -90,7 +87,7 @@ app.post('/api/generate-image', async (req, res) => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Erro na API de imagem externa:', response.status, errorText);
-            return res.status(response.status).json({ error: 'Erro ao gerar imagem com a IA. Verifique se a sua chave de API tem permissão para este modelo.' });
+            return res.status(response.status).json({ error: 'Erro ao gerar imagem. Verifique o console da Vercel para detalhes.' });
         }
 
         const result = await response.json();

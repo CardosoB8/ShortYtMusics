@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramentas Premium para WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Pacifico&family=Oswald:wght@400;700&family=Anton&family=Poppins:wght@400;700&family=Lato:wght@400;700&family=Roboto:wght@400;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script async="async" data-cfasync="false" src="//pl27551566.revenuecpmgate.com/178aa8cf115d7784522de68ecdc86a52/invoke.js"></script> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .app-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        canvas {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            aspect-ratio: 9/16;
+            background-color: #f3f4f6;
+        }
+        .ad-container {
+            width: 100%;
+            height: 100px;
+            background-color: #f3f4f6;
+            border: 1px dashed #9ca3af;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            font-weight: bold;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 12px 24px;
+            font-weight: bold;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+            transform: scale(1.05);
+        }
+        .color-dialog {
+            display: none;
+            position: absolute;
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        .color-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover {
+            border-color: #3b82f6;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1 class="text-4xl font-bold text-gray-900 text-center mb-4">Ferramentas Premium para WhatsApp</h1>
+    <p class="text-gray-600 text-center">Crie, personalize e compartilhe com um toque premium.</p>
+
+    <div class="ad-container mt-4">
+        <div id="container-178aa8cf115d7784522de68ecdc86a52"></div>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded-lg">
+        <h2 class="section-header">1. Criador de Status</h2>
+        <div class="flex flex-col md:flex-row gap-4 mb-4">
+            <div class="md:w-1/2">
+                <canvas id="statusCanvas" width="720" height="1280"></canvas>
+            </div>
+            <div class="md:w-1/2 flex flex-col gap-4">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Texto da Mensagem</h3>
+                    <textarea id="textInput" class="w-full h-24 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 resize-none" placeholder="Digite seu texto aqui..."></textarea>
+                    <div class="flex gap-2 mt-2">
+                        <select id="messageCategory" class="flex-1 p-2 rounded-lg border border-gray-300">
+                            <option value="amor">Amor</option>
+                            <option value="motivacao">Motivação</option>
+                            <option value="humor">Humor</option>
+                        </select>
+                        <button id="loadMessageBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+                            Gerar Mensagem
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Personalização</h3>
+                    <div class="flex flex-col gap-2">
+                        <select id="fontSelect" class="w-full p-2 rounded-lg border border-gray-300">
+                            <option value="Inter">Inter (Padrão)</option>
+                            <option value="Pacifico">Pacifico</option>
+                            <option value="Oswald">Oswald</option>
+                            <option value="Anton">Anton</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Open Sans">Open Sans</option>
+                        </select>
+                        <div class="flex gap-2">
+                            <select id="fontSizeSelect" class="flex-1 p-2 rounded-lg border border-gray-300">
+                                <option value="50">Pequena</option>
+                                <option value="70" selected>Média</option>
+                                <option value="90">Grande</option>
+                                <option value="120">Extra Grande</option>
+                            </select>
+                            <select id="fontAlign" class="flex-1 p-2 rounded-lg border border-gray-300">
+                                <option value="left">Esquerda</option>
+                                <option value="center" selected>Centro</option>
+                                <option value="right">Direita</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Fundo</h3>
+                    <div class="flex flex-wrap gap-2 justify-center relative">
+                        <button id="colorBtn" class="w-10 h-10 rounded-full border border-gray-400 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center text-xl" style="background-color: #3b82f6;">
+                            🎨
+                        </button>
+                        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="uploadImage(event)">
+                        <label for="imageInput" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-dashed border-gray-400 text-gray-600 cursor-pointer transform hover:scale-110 transition-transform duration-200">
+                            +
+                        </label>
+                        <div id="colorDialog" class="color-dialog">
+                            <div class="grid grid-cols-5 gap-2">
+                                <div class="color-swatch" style="background-color: #3b82f6;" data-color="#3b82f6"></div>
+                                <div class="color-swatch" style="background-color: #10b981;" data-color="#10b981"></div>
+                                <div class="color-swatch" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                                <div class="color-swatch" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                                <div class="color-swatch" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                                <div class="color-swatch" style="background-color: #1f2937;" data-color="#1f2937"></div>
+                                <div class="color-swatch" style="background-color: #e5e7eb;" data-color="#e5e7eb"></div>
+                                <div class="color-swatch" style="background-color: #f9a8d4;" data-color="#f9a8d4"></div>
+                                <div class="color-swatch" style="background-color: #92e6a7;" data-color="#92e6a7"></div>
+                                <div class="color-swatch" style="background-color: #a7e0f9;" data-color="#a7e0f9"></div>
+                                <input type="color" id="nativeColorPicker" class="w-10 h-10 rounded-full cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="downloadBtn" class="btn-primary w-full mt-4">
+                    Baixar Imagem
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded-lg">
+        <h2 class="section-header">2. Ferramentas Úteis</h2>
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Gerador de Imagem com IA ✨</h3>
+            <p class="text-sm text-gray-500 mb-2">Descreva a imagem que você quer e a IA criará uma arte exclusiva para o fundo do seu status.</p>
+            <div class="flex flex-col md:flex-row gap-2 mt-2">
+                <input type="text" id="aiImagePrompt" class="flex-1 p-2 rounded-lg border border-gray-300" placeholder="Ex: um gato astronauta no espaço">
+                <button id="generateAIImageBtn" class="btn-primary flex-1">Gerar Imagem</button>
+            </div>
+            <div id="aiImageLoading" class="hidden mt-2 text-center text-sm text-blue-600">
+                Gerando imagem... por favor, aguarde.
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Gerador de Mensagem com IA ✨</h3>
+            <p class="text-sm text-gray-500 mb-2">Diga o que você precisa e a IA criará uma mensagem única.</p>
+            <div class="flex flex-col md:flex-row gap-2 mt-2">
+                <input type="text" id="aiPrompt" class="flex-1 p-2 rounded-lg border border-gray-300" placeholder="Ex: uma frase motivacional sobre a vida">
+                <button id="generateAIBtn" class="btn-primary flex-1">Gerar Mensagem</button>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Gerador de Link Direto</h3>
+            <p class="text-sm text-gray-500 mb-2">Crie links para iniciar conversas sem adicionar o contato.</p>
+            <div class="flex flex-col md:flex-row gap-2">
+                <input type="tel" id="waPhone" class="flex-1 p-2 rounded-lg border border-gray-300" placeholder="Número (ex: 5511999998888)">
+                <input type="text" id="waMessage" class="flex-1 p-2 rounded-lg border border-gray-300" placeholder="Mensagem pré-definida (opcional)">
+            </div>
+            <div class="flex flex-col md:flex-row gap-2 mt-2">
+                <button id="generateWaLink" class="btn-primary flex-1">Gerar Link</button>
+                <a id="waLink" href="#" target="_blank" class="hidden py-3 px-6 text-center font-bold text-sm bg-green-500 text-white rounded-full">Abrir no WhatsApp</a>
+                <button id="copyWaLink" class="btn-secondary hidden flex-1">Copiar Link</button>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Copiar Mensagem</h3>
+            <p class="text-sm text-gray-500 mb-2">Copie o texto do criador de status com um clique.</p>
+            <button id="copyTextBtn" class="btn-secondary w-full">Copiar Texto</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('statusCanvas');
+    const ctx = canvas.getContext('2d');
+    const textInput = document.getElementById('textInput');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const messageCategorySelect = document.getElementById('messageCategory');
+    const loadMessageBtn = document.getElementById('loadMessageBtn');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
+    const fontAlign = document.getElementById('fontAlign');
+    const imageInput = document.getElementById('imageInput');
+    
+    // Wa.me elements
+    const waPhone = document.getElementById('waPhone');
+    const waMessage = document.getElementById('waMessage');
+    const generateWaLink = document.getElementById('generateWaLink');
+    const waLink = document.getElementById('waLink');
+    const copyWaLink = document.getElementById('copyWaLink');
+
+    // Other buttons
+    const copyTextBtn = document.getElementById('copyTextBtn');
+
+    // AI elements
+    const aiPrompt = document.getElementById('aiPrompt');
+    const generateAIBtn = document.getElementById('generateAIBtn');
+    const aiImagePrompt = document.getElementById('aiImagePrompt');
+    const generateAIImageBtn = document.getElementById('generateAIImageBtn');
+    const aiImageLoading = document.getElementById('aiImageLoading');
+
+    // Color picker
+    const colorBtn = document.getElementById('colorBtn');
+    const colorDialog = document.getElementById('colorDialog');
+    const nativeColorPicker = document.getElementById('nativeColorPicker');
+    const colorSwatches = document.querySelectorAll('.color-swatch');
+
+    let currentBackground = '#3b82f6';
+    let currentImage = null;
+    let currentFont = 'Inter';
+    let currentFontSize = '70';
+    let currentAlignment = 'center';
+    const textColor = '#ffffff';
+
+    const messages = {
+        amor: ["Você é a razão do meu sorriso todos os dias.", "Amar é encontrar a felicidade em outro.", "Meu coração é perfeito porque você vive nele."],
+        motivacao: ["Acredite no seu potencial. Você é mais forte do que pensa.", "O sucesso é a soma de pequenos esforços.", "Seja a mudança que você quer ver no mundo."],
+        humor: ["Eu não sou preguiçoso, estou em modo de economia de energia.", "A vida é curta. Sorria enquanto ainda tem dentes!", "Não estou louco, apenas o meu mundo é diferente do seu."]
+    };
+
+    // Function to wrap text into multiple lines
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        const lines = [];
+
+        for(let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = context.measureText(testLine);
+            const testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                lines.push(line);
+                line = words[n] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+        lines.push(line);
+        return lines;
+    }
+
+    // Function to draw status on canvas
+    function drawStatus() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw background (color or image)
+        if (currentImage) {
+            // Calculate aspect ratio
+            const canvasRatio = canvas.width / canvas.height;
+            const imageRatio = currentImage.width / currentImage.height;
+            let sx, sy, sWidth, sHeight;
+
+            if (imageRatio > canvasRatio) { // Image is wider than canvas
+                sHeight = currentImage.height;
+                sWidth = sHeight * canvasRatio;
+                sx = (currentImage.width - sWidth) / 2;
+                sy = 0;
+            } else { // Image is taller than canvas
+                sWidth = currentImage.width;
+                sHeight = sWidth / canvasRatio;
+                sx = 0;
+                sy = (currentImage.height - sHeight) / 2;
+            }
+
+            ctx.drawImage(currentImage, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = currentBackground;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Text settings
+        ctx.fillStyle = textColor;
+        ctx.font = `${currentFontSize}px '${currentFont}', sans-serif`;
+        ctx.textAlign = currentAlignment;
+        
+        let textX;
+        if (currentAlignment === 'left') {
+            textX = 50;
+        } else if (currentAlignment === 'right') {
+            textX = canvas.width - 50;
+        } else {
+            textX = canvas.width / 2;
+        }
+
+        const text = textInput.value || "Digite seu texto ou escolha uma mensagem...";
+        const maxWidth = canvas.width - 100;
+        const lineHeight = parseInt(currentFontSize) + 20;
+        const lines = wrapText(ctx, text, 0, 0, maxWidth, lineHeight);
+        const totalHeight = lines.length * lineHeight;
+        const startY = (canvas.height - totalHeight) / 2 + lineHeight / 2;
+        
+        lines.forEach((line, index) => {
+            ctx.fillText(line.trim(), textX, startY + index * lineHeight);
+        });
+    }
+
+    // Event listeners for text and canvas
+    textInput.addEventListener('input', drawStatus);
+    fontSelect.addEventListener('change', (e) => { currentFont = e.target.value; drawStatus(); });
+    fontSizeSelect.addEventListener('change', (e) => { currentFontSize = e.target.value; drawStatus(); });
+    fontAlign.addEventListener('change', (e) => { currentAlignment = e.target.value; drawStatus(); });
+
+    // Custom color picker logic
+    colorBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        colorDialog.style.display = 'block';
+        colorDialog.style.top = `${colorBtn.offsetTop + colorBtn.offsetHeight + 10}px`;
+        colorDialog.style.left = `${colorBtn.offsetLeft}px`;
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!colorDialog.contains(e.target) && e.target !== colorBtn) {
+            colorDialog.style.display = 'none';
+        }
+    });
+
+    nativeColorPicker.addEventListener('input', (e) => {
+        currentImage = null;
+        currentBackground = e.target.value;
+        drawStatus();
+    });
+
+    colorSwatches.forEach(swatch => {
+        swatch.addEventListener('click', (e) => {
+            currentImage = null;
+            currentBackground = e.target.dataset.color;
+            drawStatus();
+            colorDialog.style.display = 'none';
+        });
+    });
+
+    // Download button
+    downloadBtn.addEventListener('click', () => {
+        const image = canvas.toDataURL('image/jpeg');
+        const link = document.createElement('a');
+        link.download = 'status-premium.jpg';
+        link.href = image;
+        link.click();
+    });
+
+    loadMessageBtn.addEventListener('click', () => {
+        const category = messageCategorySelect.value;
+        const categoryMessages = messages[category];
+        if (categoryMessages && categoryMessages.length > 0) {
+            const randomIndex = Math.floor(Math.random() * categoryMessages.length);
+            textInput.value = categoryMessages[randomIndex];
+            drawStatus();
+        }
+    });
+
+    // Image upload
+    function uploadImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = img;
+                    drawStatus();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    window.uploadImage = uploadImage;
+
+    // Wa.me link generator
+    generateWaLink.addEventListener('click', () => {
+        const phone = waPhone.value.replace(/[^0-9]/g, '');
+        const message = waMessage.value;
+        if (!phone) {
+            return;
+        }
+
+        const encodedMessage = encodeURIComponent(message);
+        const link = `https://wa.me/${phone}?text=${encodedMessage}`;
+        
+        waLink.href = link;
+        waLink.classList.remove('hidden');
+        copyWaLink.classList.remove('hidden');
+    });
+
+    copyWaLink.addEventListener('click', () => {
+        const link = waLink.href;
+        if (link) {
+            copyToClipboard(link, copyWaLink);
+        }
+    });
+
+    // Copy text from status
+    copyTextBtn.addEventListener('click', () => {
+        const textToCopy = textInput.value;
+        if (textToCopy) {
+            copyToClipboard(textToCopy, copyTextBtn);
+        }
+    });
+    
+    // Function to copy to clipboard
+    function copyToClipboard(text, element) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            const originalText = element.textContent;
+            element.textContent = 'Copiado!';
+            setTimeout(() => {
+                element.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            console.error('Falha ao copiar:', err);
+        }
+        document.body.removeChild(textarea);
+    }
+
+    // AI Text Generation
+    generateAIBtn.addEventListener('click', async () => {
+        const prompt = aiPrompt.value;
+        if (!prompt) {
+            textInput.value = "Por favor, digite uma descrição para a mensagem.";
+            drawStatus();
+            return;
+        }
+
+        const originalBtnText = generateAIBtn.textContent;
+        generateAIBtn.textContent = 'Gerando...';
+        generateAIBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/generate-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            const result = await response.json();
+            const text = result.text;
+
+            if (text) {
+                textInput.value = text;
+                drawStatus();
+            } else {
+                textInput.value = result.error || "Não foi possível gerar a mensagem. Tente novamente.";
+                drawStatus();
+            }
+        } catch (error) {
+            console.error('Erro ao gerar mensagem com IA:', error);
+            textInput.value = "Erro na comunicação com o servidor. Tente novamente mais tarde.";
+            drawStatus();
+        } finally {
+            generateAIBtn.textContent = originalBtnText;
+            generateAIBtn.disabled = false;
+        }
+    });
+
+    // AI Image Generation
+    generateAIImageBtn.addEventListener('click', async () => {
+        const prompt = aiImagePrompt.value;
+        if (!prompt) {
+            aiImageLoading.textContent = "Por favor, digite uma descrição para a imagem.";
+            aiImageLoading.classList.remove('hidden');
+            return;
+        }
+
+        const originalBtnText = generateAIImageBtn.textContent;
+        generateAIImageBtn.textContent = 'Gerando Imagem...';
+        generateAIImageBtn.disabled = true;
+        aiImageLoading.textContent = "Gerando imagem... por favor, aguarde.";
+        aiImageLoading.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/generate-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            const result = await response.json();
+            const base64Data = result?.base64;
+
+            if (base64Data) {
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = img;
+                    drawStatus();
+                };
+                img.src = `data:image/jpeg;base64,${base64Data}`;
+                currentBackground = '#3b82f6'; // Reset color if image is generated
+            } else {
+                console.error("Não foi possível gerar a imagem.");
+            }
+        } catch (error) {
+            console.error('Erro ao gerar imagem com IA:', error);
+        } finally {
+            generateAIImageBtn.textContent = originalBtnText;
+            generateAIImageBtn.disabled = false;
+            aiImageLoading.classList.add('hidden');
+        }
+    });
+
+    // Wait for fonts to be ready before drawing
+    window.onload = function() {
+        document.fonts.ready.then(() => {
+            drawStatus();
+        });
+    };
+</script>
+
+</body>
+</html>
